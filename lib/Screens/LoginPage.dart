@@ -3,6 +3,7 @@
 import 'package:chatting_app/Helper/FirebaseHelper.dart';
 import 'package:chatting_app/Screens/RegisterPage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
@@ -60,12 +61,17 @@ class _LoginPageState extends State<LoginPage> {
                     minWidth: 400,
                     height: 50,
                     color: Colors.amber,
-                    onPressed: () {
+                    onPressed: () async {
+                      SharedPreferences pref =
+                          await SharedPreferences.getInstance();
                       //if email and passwords is not empty it will take action on it
                       if (_emailController.text.isNotEmpty &&
                           _passwordController.text.isNotEmpty) {
                         service.loginUser(context, _emailController.text,
                             _passwordController.text);
+                        // it will save userEmail in email key
+                        // from this key we will check,if email key is present in the key go to Chatscreen else LoginScreen
+                        pref.setString("email", _emailController.text);
                       } else {
                         //if textfields are empty it show warning message
                         service.errorBox(context,

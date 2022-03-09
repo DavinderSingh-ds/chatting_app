@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:chatting_app/Screens/ChatScreen.dart';
+import 'package:chatting_app/Screens/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +56,14 @@ class Service {
   void signOut(context) async {
     try {
       //this functon helps to signout user
-      await auth.signOut();
+      await auth.signOut().then((value) => {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(title: 'Title'),
+                ),
+                (route) => false)
+          });
     } catch (e) {
       //if it has some error then it will show dialogue
       errorBox(context, e);
