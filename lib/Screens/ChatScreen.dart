@@ -60,7 +60,15 @@ class _ChatScreenState extends State<ChatScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Messages'),
+          const SizedBox(
+            height: 10,
+          ),
+          const Text(
+            'Messages',
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
           //displaying messages
           Expanded(
             child: Container(
@@ -142,28 +150,29 @@ class ShowMessages extends StatelessWidget {
                         : CrossAxisAlignment.start,
                     children: [
                       Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: loginUser!.email == x['user']
-                                ? Colors.blue.withOpacity(0.2)
-                                : Colors.amber.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(x['messages']),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "User: " + x['user'],
-                                style: const TextStyle(
-                                    fontSize: 10, color: Colors.green),
-                              ),
-                            ],
-                          )),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: loginUser!.email == x['user']
+                              ? Colors.blue.withOpacity(0.2)
+                              : Colors.amber.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(x['messages']),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "User: " + x['user'],
+                              style: const TextStyle(
+                                  fontSize: 10, color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );

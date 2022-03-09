@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                       } else {
                         //if textfields are empty it show warning message
                         service.errorBox(context,
-                            "Fields must not empty please provide valid emial and password!");
+                            "Fields must not empty please provide valid email and password !");
                       }
                     },
                     child: const Text("Login"),

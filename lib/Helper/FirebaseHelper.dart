@@ -76,7 +76,7 @@ class Service {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Error'),
+            title: const Text('Hey dear!'),
             content: Text(e.toString()),
           );
         });
