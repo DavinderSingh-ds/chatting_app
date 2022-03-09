@@ -3,6 +3,7 @@
 import 'package:chatting_app/Helper/FirebaseHelper.dart';
 import 'package:chatting_app/Screens/LoginPage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key, required this.title}) : super(key: key);
@@ -60,12 +61,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     minWidth: 400,
                     height: 50,
                     color: Colors.amber,
-                    onPressed: () {
+                    onPressed: () async {
+                      SharedPreferences pref =
+                          await SharedPreferences.getInstance();
                       //if email and passwords is not empty it will take action on it
                       if (_emailController.text.isNotEmpty &&
                           _passwordController.text.isNotEmpty) {
                         service.createUser(context, _emailController.text,
                             _passwordController.text);
+                        pref.setString("email", _emailController.text);
                       } else {
                         //if textfields are empty it show warning message
                         service.errorBox(context,

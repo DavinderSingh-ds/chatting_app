@@ -2,6 +2,7 @@
 import 'package:chatting_app/Helper/FirebaseHelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var loginUser = FirebaseAuth.instance.currentUser;
 
@@ -38,8 +39,12 @@ class _ChatScreenState extends State<ChatScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               service.signOut(context);
+              //now here we remove that email from the key when user click logout button
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              pref.remove("email");
+              // it will remove user email when user click logout button
             },
             icon: const Icon(Icons.logout),
           ),
