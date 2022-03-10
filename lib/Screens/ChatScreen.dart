@@ -1,4 +1,5 @@
 // ignore_for_file: file_names
+
 import 'package:chatting_app/Helper/FirebaseHelper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,13 +15,34 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      //user value will be online
+      updateUser("online");
+    } else {
+      //user will be offline
+      updateUser("offline");
+    }
+  }
+
+  updateUser(status) async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(loginUser!.uid)
+        .update({'status': status});
+  }
+
   Service service = Service();
 
   final storeMessage = FirebaseFirestore.instance;
   final auth = FirebaseAuth.instance;
 
   TextEditingController msg = TextEditingController();
+
+  Map? map;
+  String? userdata;
 
   //for current user
   getCurrentUser() {
@@ -31,10 +53,25 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  userData() async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(loginUser!.uid)
+        .get()
+        .then((value) {
+      setState(() {
+        map = value.data();
+        userdata = map?['status'];
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getCurrentUser();
+    userData();
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
@@ -42,10 +79,18 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(loginUser!.email.toString()),
+            Text(userdata.toString()),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () async {
               service.signOut(context);
+              updateUser("offline");
               //now here we remove that email from the key when user click logout button
               SharedPreferences pref = await SharedPreferences.getInstance();
               pref.remove("email");
@@ -54,12 +99,59 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: const Icon(Icons.logout),
           ),
         ],
-        title: Text(loginUser!.email.toString()),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const Text("Other User Status"),
+          Container(
+            color: Colors.amber,
+            height: 50,
+            width: double.infinity,
+            child: StreamBuilder<QuerySnapshot>(
+                //now we can order the message that sent message show in the bottom
+                stream:
+                    FirebaseFirestore.instance.collection("Users").snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      physics: const ScrollPhysics(),
+                      shrinkWrap: true,
+                      primary: true,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, i) {
+                        QueryDocumentSnapshot x = snapshot.data!.docs[i];
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 10, top: 2),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //if the user as self ir will not show his status and here is showing only
+                              //other user
+                              loginUser!.email == x['email']
+                                  ? const Text("")
+                                  : Column(
+                                      children: [
+                                        const CircleAvatar(
+                                          radius: 14,
+                                          backgroundColor: Colors.green,
+                                        ),
+                                        Text(x["name"]),
+                                      ],
+                                    ),
+                            ],
+                          ),
+                        );
+                      });
+                }),
+          ),
           const SizedBox(
             height: 10,
           ),

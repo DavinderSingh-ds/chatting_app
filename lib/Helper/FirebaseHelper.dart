@@ -2,6 +2,7 @@
 
 import 'package:chatting_app/Screens/ChatScreen.dart';
 import 'package:chatting_app/Screens/LoginPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class Service {
   final auth = FirebaseAuth.instance;
 
   //for create User we define function
-  void createUser(context, email, password) async {
+  void createUser(context, name, email, password) async {
     try {
       //when the user create it will go to chatscreen directly not to login page
       await auth
@@ -23,6 +24,10 @@ class Service {
                   builder: ((context) => const ChatScreen()),
                 ),
               ),
+              FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(auth.currentUser!.uid)
+                  .set({"name": name, "email": email, "status": "online"})
             },
           );
     } catch (e) {

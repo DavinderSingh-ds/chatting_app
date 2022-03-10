@@ -15,6 +15,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey _formKey = GlobalKey();
@@ -36,6 +37,15 @@ class _RegisterPageState extends State<RegisterPage> {
                 const Text(
                   'SignUp Page',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 18),
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter Your Name ',
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 18),
@@ -67,8 +77,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       //if email and passwords is not empty it will take action on it
                       if (_emailController.text.isNotEmpty &&
                           _passwordController.text.isNotEmpty) {
-                        service.createUser(context, _emailController.text,
-                            _passwordController.text);
+                        service.createUser(context, _nameController.text,
+                            _emailController.text, _passwordController.text);
                         pref.setString("email", _emailController.text);
                       } else {
                         //if textfields are empty it show warning message
