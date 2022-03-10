@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:chatting_app/Helper/FirebaseHelper.dart';
+import 'package:chatting_app/Screens/NewChatPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +144,16 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                           radius: 14,
                                           backgroundColor: Colors.green,
                                         ),
-                                        Text(x["name"]),
+                                        GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: ((context) =>
+                                                      const NewChatPage()),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(x["name"])),
                                       ],
                                     ),
                             ],
